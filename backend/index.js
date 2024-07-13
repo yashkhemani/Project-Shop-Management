@@ -23,15 +23,12 @@ const DB_CONNECT = process.env.DB_CONNECT;
 
 // Connecting to MongoDB
 mongoose
-  .connect(DB_CONNECT)
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
+  .connect(DB_CONNECT, process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
   })
-  .catch((err) => {
-    console.error("Connection error", err.message);
-  });
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("Could not connect to MongoDB...", err));
 
 // Routes Middleware
 app.use("/api/user", authRoute);
@@ -39,3 +36,6 @@ app.use("/api/posts", postRoute);
 app.use("/api/shops", shopRoute);
 app.use("/api/products", productRoute);
 app.use("/", shopRoute); // Assuming you want the shop route to also handle root path
+
+//start server
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

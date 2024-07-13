@@ -2,16 +2,13 @@ const router = require("express").Router();
 const User = require("../model/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-// importing the validation
 const { registerValidation, loginValidation } = require("../validation");
 
 // Router for Register
 router.post("/register", async (req, res) => {
-  // validate the request
+  // Validate the request
   const { error } = registerValidation(req.body);
-  if (error) {
-    return res.status(400).send(error.details[0].message);
-  }
+  if (error) return res.status(400).send(error.details[0].message);
 
   // Check if the email already exists
   const emailExist = await User.findOne({ email: req.body.email });
@@ -27,6 +24,7 @@ router.post("/register", async (req, res) => {
     email: req.body.email,
     password: hashedPassword,
   });
+
   try {
     const savedUser = await user.save();
     res.send({ user: user._id });
@@ -37,11 +35,9 @@ router.post("/register", async (req, res) => {
 
 // Router for Login
 router.post("/login", async (req, res) => {
-  // validate the request
+  // Validate the request
   const { error } = loginValidation(req.body);
-  if (error) {
-    return res.status(400).send(error.details[0].message);
-  }
+  if (error) return res.status(400).send(error.details[0].message);
 
   // Check if the email exists
   const user = await User.findOne({ email: req.body.email });
@@ -57,6 +53,7 @@ router.post("/login", async (req, res) => {
   res.header("auth-token", token).send(token);
 });
 
+// Router for Logout
 router.post("/logout", (req, res) => {
   res.status(200).send("Logged out successfully.");
 });
